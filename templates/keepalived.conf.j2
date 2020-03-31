@@ -1,0 +1,30 @@
+#jinja2: lstrip_blocks: "True", trim_blocks: "True"
+{% for vrrp_instance in vrrp_instances %}
+vrrp_instance {{ vrrp_instance.name }} {
+    interface {{ vrrp_instance.network_interface }}
+    state {% if is_initial %}MASTER{% else %}BACKUP{% endif %}
+    priority {% if is_initial %}101{% else %}100{% endif %}
+    virtual_router_id {{ vrrp_instance.virtual_router_id }}
+
+    virtual_ipaddress {
+{% for vip in vrrp_instance.virtual_ip_addresses %}
+        {{ vip }}{% endfor %}
+    }
+
+    track_script {
+{% for script in vrrp_instance.track_scripts %}
+        {{ script.name }}{% endfor %}
+    }
+}
+{% for vrrp_script in vrrp_instance.track_scripts %}
+vrrp_script {{ vrrp_script.name }} {
+    script {{ vrrp_script.path }}
+    timeout {{ vrrp_script.timeout }}
+    interval {{ vrrp_script.interval }}
+    weight {{ vrrp_script.weight }}
+    rise {{ vrrp_script.rise }}
+    fall {{ vrrp_script.fall }}
+    user {{ vrrp_script.user }} {{ vrrp_script.group }}
+}
+{% endfor %}
+{% endfor %}
