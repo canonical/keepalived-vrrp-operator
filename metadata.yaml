@@ -1,0 +1,23 @@
+name: "keepalived-vrrp"
+summary: "Failover and monitoring daemon (VRRP mode)"
+maintainers:
+  - "Dmitrii Shcherbakov <dmitrii.shcherbakov@canonical.com>"
+description: |
+  Keepalived has a VRRP implementation which this charm utilizes to provide virtual IPs for services that need them.
+tags:
+  - "networking"
+series:
+  - "bionic"
+  - "eoan"
+  - "focal"
+subordinate: true
+peers:
+    keepalived-peers:
+        interface: keepalived-peers
+requires:
+    juju-info:
+        scope: container
+        interface: juju-info
+    vrrp-parameters:
+        scope: container
+        interface: vrrp-parameters
